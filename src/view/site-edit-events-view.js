@@ -204,4 +204,3 @@ export default class TripEditEventView extends AbstractClass{
     this._callback.editClick();
   }
 }
-
