@@ -1,25 +1,72 @@
-import { createSiteMenuTemplate } from './view/site-menu-view';
-import { createTicketTemlate } from './view/site-ticket-view';
-import { createFilterTemlate } from './view/site-filter-view';
-import { createEventsTemplate } from './view/site-events-view';
-import { renderTemplate, RenderPosition } from './render.js';
+import SiteMenuView from './view/site-menu-view';
+import TicketTemplate from './view/site-ticket-view';
+import SiteFiltersView from './view/site-filter-view';
+import TripEventView from './view/site-events-view';
+import TripEditEventView from './view/site-edit-events-view';
+import { RenderPosition, render as render, replace } from './utils/render.js';
 import { generateEvent } from './mock/event';
+import ControlsTemplate from './view/trip-controls-template';
+import NoTripEventElement from './view/no-events-view';
 
-const eventCount = 6;
-const events = Array.from({ length: eventCount }, generateEvent);
+const eventCount = 8;
+const events = Array.from({length: eventCount}, generateEvent);
 
+const renderTripEvent = (eventTripListElement, tripEvent) => {
+  const tripEventComponent = new TripEventView(tripEvent);
+  const eventEditComponent = new TripEditEventView(tripEvent);
+
+  const replaceCardToForm = () => {
+    replace(eventEditComponent, tripEventComponent);
+  };
+  const replaceFormToCard = () => {
+    replace(tripEventComponent, eventEditComponent);
+  };
+
+  const onEscKeyDown = (evt) => {
+    if(evt.key === 'Escape' || evt.key === 'Esc'){
+      evt.preventDefault();
+      replaceFormToCard();
+      document.removeEventListener('keydown', onEscKeyDown);
+    }
+  };
+  tripEventComponent.setEditCardToFormClickHandler(() =>
+  {
+    replaceCardToForm();
+    document.addEventListener('keydown', onEscKeyDown);
+  });
+
+  eventEditComponent.setEditFormToCardClickHandler(() => {
+    replaceFormToCard();
+    document.removeEventListener('keydown', onEscKeyDown);
+  });
+
+  return render(eventTripListElement, tripEventComponent.element, RenderPosition.BEFOREEND);
+};
 const tripBody = document.querySelector('.page-body');
 
-const tripMenu = tripBody.querySelector('.trip-controls__navigation');
-renderTemplate(tripMenu, createSiteMenuTemplate(), RenderPosition.BEFOREEND);
+const tripControls = tripBody.querySelector('.trip-main');
+const controlsTemplate = new ControlsTemplate();
 
-const tripEvents = tripBody.querySelector('.trip-events');
-renderTemplate(tripEvents, createTicketTemlate(events[0]), RenderPosition.BEFOREEND);
+render(tripControls, controlsTemplate.element, RenderPosition.BEFOREEND);
+render(controlsTemplate.element, new SiteMenuView().element, RenderPosition.AFTERBEGIN);
 
+const renderBoard = (boardTemplate, boardEvents) => {
 
-for (let i = 1; i < eventCount; i++) {
-  renderTemplate(tripEvents, createEventsTemplate(events[i]), RenderPosition.BEFOREEND);
-}
+  if(boardEvents.every((event) => event.isArchive)){
+    render(boardTemplate, new NoTripEventElement().element, RenderPosition.AFTERBEGIN);
+    return;
+  }
+
+  render(boardTemplate, new TicketTemplate(events[0]).element, RenderPosition.AFTERBEGIN);
+
+  const tripEvents = tripBody.querySelector('.trip-events');
+  for(let i = 0; i < eventCount; i++){
+    renderTripEvent(tripEvents, events[i]);
+  }
+
+};
+const siteMain = tripBody.querySelector('.page-main');
+renderBoard(siteMain,events);
 
 const tripFilters = tripBody.querySelector('.trip-controls__filters');
-renderTemplate(tripFilters, createFilterTemlate(), RenderPosition.BEFOREEND);
+render(tripFilters, new SiteFiltersView().element, RenderPosition.BEFOREEND);
