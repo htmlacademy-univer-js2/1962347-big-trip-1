@@ -1,4 +1,6 @@
-export const createEventsTemplate = (event) => {
+import AbstractClass from './abstract-class';
+
+const createEventsTemplate = (event) => {
   const {data, eventIcon,
     eventTitle,
     periodTime,
@@ -9,7 +11,7 @@ export const createEventsTemplate = (event) => {
 
   const favoriteClass = isFavorite ? 'event__favorite-btn event__favorite-btn--active' : 'event__favorite-btn';
   return `<li class="trip-events__item">
-      <div class="event">
+  <div class="event">
         <time class="event__date" datetime="2019-03-18">${data}</time>
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="${eventIcon}" alt="Event type icon">
@@ -43,9 +45,38 @@ export const createEventsTemplate = (event) => {
         <button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>
         </button>
-      </div>
-    </li>
-
-    
-  `;
+      </div></li>`;
 };
+
+export default class TripEventView extends AbstractClass{
+  #tripEvent = null;
+
+  constructor(tripEvent){
+    super();
+    this.#tripEvent = tripEvent;
+  }
+
+  get template() {
+    return createEventsTemplate(this.#tripEvent);
+  }
+
+  setEditCardToFormClickHandler = (callback) => {
+    this._callback.editCardToFormClick = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
+  }
+
+  #editClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.editCardToFormClick();
+  }
+
+  setFavoriteClickHandler = (callback) =>{
+    this._callback.favoriteClick = callback;
+    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#favoriteClickHandler);
+  }
+
+  #favoriteClickHandler = (evt) =>{
+    evt.preventDefault();
+    this._callback.favoriteClick();
+  }
+}
