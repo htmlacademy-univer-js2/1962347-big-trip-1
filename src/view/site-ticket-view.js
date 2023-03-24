@@ -1,5 +1,5 @@
 export const createTicketTemlate = (event) => {
-  const {eventIcon, eventTitle, imgIndexes} = event;
+  const {eventIcon, eventTitle, imgIndexes: imgIds} = event;
   return `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
     <div class="trip-sort__item  trip-sort__item--day">
       <input id="sort-day" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-day" checked>
@@ -180,11 +180,11 @@ export const createTicketTemlate = (event) => {
 
                     <div class="event__photos-container">
                       <div class="event__photos-tape">
-                        <img class="event__photo" src=${imgIndexes[0]} alt="Event photo">
-                        <img class="event__photo" src=${imgIndexes[1]} alt="Event photo">
-                        <img class="event__photo" src=${imgIndexes[2]} alt="Event photo">
-                        <img class="event__photo" src=${imgIndexes[3]} alt="Event photo">
-                        <img class="event__photo" src=${imgIndexes[4]} alt="Event photo">                        
+                        <img class="event__photo" src=${imgIds[0]} alt="Event photo">
+                        <img class="event__photo" src=${imgIds[1]} alt="Event photo">
+                        <img class="event__photo" src=${imgIds[2]} alt="Event photo">
+                        <img class="event__photo" src=${imgIds[3]} alt="Event photo">
+                        <img class="event__photo" src=${imgIds[4]} alt="Event photo">                        
                       </div>
                     </div>
                   </section>
