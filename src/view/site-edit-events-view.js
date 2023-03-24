@@ -1,8 +1,11 @@
+import { generateEvent } from '../mock/event';
 import AbstractClass from './abstract-class';
+const eventData = generateEvent;
 
-export const createTicketTemlate = (event) => {
-  const {eventIcon, eventTitle, imgIndexes} = event;
-  return `<div class='page-body__container'><section class="trip-events">
+const createEventsTemplate = (event) => {
+  const { eventIcon,
+    eventTitle, imgIndexes} = event;
+  return `<section class="trip-events">
   <h2 class="visually-hidden">Trip events</h2>
   <form class="trip-events__trip-sort  trip-sort" action="#" method="get">
     <div class="trip-sort__item  trip-sort__item--day">
@@ -177,6 +180,7 @@ export const createTicketTemlate = (event) => {
             </div>
           </section>
         </section>
+        
         <section class="event__details">
                   <section class="event__section  event__section--destination">
                     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
@@ -197,19 +201,30 @@ export const createTicketTemlate = (event) => {
     </li>
     </ul>
     </section>
-    </div>`;
+      
+  `;
 };
 
-export default class TicketTemplate extends AbstractClass
-{
-  #event = null;
+export default class TripEditEventView extends AbstractClass{
+  #tripEvent = null;
 
-  constructor(event){
+  constructor(tripEvent = eventData){
     super();
-    this.#event = event;
+    this.#tripEvent = tripEvent;
   }
 
   get template() {
-    return createTicketTemlate(this.#event);
+    return createEventsTemplate(this.#tripEvent);
+  }
+
+  setEditFormToCardClickHandler = (callback) => {
+    this._callback.editClick = callback;
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#editClickHandler);
+  }
+
+  #editClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.editClick();
   }
 }
+
