@@ -7,6 +7,7 @@ export default class PointModel extends AbstractObservable{
     #points = [];
     #apiService = null;
     #offers = [];
+    #destinations = [];
 
     constructor(apiService){
       super();
@@ -17,30 +18,29 @@ export default class PointModel extends AbstractObservable{
       return this.#offers;
     }
 
+    get destinations(){
+      return this.#destinations;
+    }
+
     get points(){
+
       return this.#points;
     }
 
     init = async () => {
       try{
-        const points = await this.#apiService.points;
+        this.#offers = await this.#apiService.offers;
+        this.#destinations = await this.#apiService.destinations;
 
+        const points = await this.#apiService.points;
         this.#points = points.map(this.#adaptToClient);
+
       }
       catch(err){
         this.#points = [];
-      }
-
-      try{
-        const offers = await this.#apiService.offers;
-        this.#offers = offers;
-        // console.log(offers);
-      }
-      catch(err){
-        // console.log(err);
         return err;
       }
-
+      // console.log(this.#points);
       this._notify(UpdateType.INIT);
     }
 
@@ -79,27 +79,6 @@ export default class PointModel extends AbstractObservable{
         throw new Error('Cant add point');
       }
     }
-
-    // addPoint = (updateType, update) => {
-    //   this.#points = [update, ...this.#points];
-
-    //   this._notify(updateType, update);
-    // }
-
-    // deletePoint = (updateType, update) => {
-    //   const index = this.#points.findIndex((point) => point.id === update.id);
-
-    //   if(index === -1){
-    //     throw new Error('Cant delete unexisting point');
-    //   }
-
-    //   this.#points = [
-    //     ...this.#points.slice(0, index),
-    //     ...this.#points.slice(index + 1),
-    //   ];
-
-    //   this._notify(updateType);
-    // }
 
     deletePoint = async (updateType, update) => {
       const index = this.#points.findIndex((point) => point.id === update.id);
@@ -150,7 +129,6 @@ export default class PointModel extends AbstractObservable{
       delete adaptedPoint['is_favorite'];
       delete adaptedPoint['base_price'];
       delete adaptedPoint['date_to'];
-
       return adaptedPoint;
     }
 }

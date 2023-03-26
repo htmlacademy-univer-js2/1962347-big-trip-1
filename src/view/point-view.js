@@ -1,4 +1,5 @@
 import AbstractView from './abstract-view.js';
+import he from 'he';
 
 const formatTime = (timeInMinute) => {
   const days = Math.floor(timeInMinute / 1440) === 0 ? '' : `${Math.floor(timeInMinute / 1440)}D`;
@@ -9,11 +10,16 @@ const formatTime = (timeInMinute) => {
 };
 
 const createPointTemplate = (point) => {
-  const {pointType, price, destination, isFavorite, waitingTime, period, formatDate} = point;
+  const {pointType, price, destination, isFavorite, waitingTime, period, formatDate, offer} = point;
   const time = formatTime(waitingTime);
   const favoriteClassName = isFavorite
     ? 'event__favorite-btn event__favorite-btn--active'
     : 'event__favorite-btn';
+  let checkedOfferList = '';
+  offer.offers.forEach((currentOffer) => {
+    checkedOfferList += `${currentOffer.isChecked ? currentOffer.title : ''} ${currentOffer.isChecked ? `&plus; ${currentOffer.price } &euro;&nbsp; <br>` : ''}`;
+  });
+
 
   return `<li class="trip-events__item">
         <div class="event">
@@ -21,7 +27,7 @@ const createPointTemplate = (point) => {
           <div class="event__type">
             <img class="event__type-icon" width="42" height="42" src="img/icons/${pointType}.png" alt="Event type icon">
           </div>
-          <h3 class="event__title">${pointType} ${destination}</h3>
+          <h3 class="event__title">${pointType} ${he.encode(destination)}</h3>
           <div class="event__schedule">
             <p class="event__time">
               <time class="event__start-time" datetime="2019-03-18T10:30">${period[0]}</time>
@@ -36,8 +42,8 @@ const createPointTemplate = (point) => {
           <h4 class="visually-hidden">Offers:</h4>
           <ul class="event__selected-offers">
             <li class="event__offer">
-              <span class="event__offer-title"> </span>
-              &plus;&euro;&nbsp;
+              <span class="event__offer-title"></span>
+              ${checkedOfferList}
               <span class="event__offer-price"></span>
             </li>
           </ul>
