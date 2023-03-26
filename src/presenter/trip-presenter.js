@@ -41,7 +41,7 @@ export default class TripPresenter {
     this.#pointModel = pointsModel;
     this.#filterContainer = filterContainer;
     this.#headerMenuContainer = headerMenu;
-    this.#newPointPresenter = new NewPointPresenter(this.#pointListComponent,  this.#handleViewAction, this.#pointPresenter, this.#pointModel);
+    this.#newPointPresenter = new NewPointPresenter(this.#pointListComponent,  this.#handleViewAction, this.#pointPresenter, this.#pointModel, this.#handleModeEvent);
 
     this.#pointModel.addObserver(this.#handleModeEvent);
   }
@@ -80,7 +80,7 @@ export default class TripPresenter {
     return filteredPoints;
   }
 
-  #handleViewAction = async (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) =>{
     switch(actionType){
       case UpdateAction.UPDATE_POINT:
         this.#pointPresenter.get(update.id).setViewState(State.SAVING);
@@ -97,7 +97,7 @@ export default class TripPresenter {
           await this.#pointModel.addPoint(updateType, update);
         }
         catch(err){
-          this.#pointPresenter.get(update.id).setViewState(State.ABORTING);
+          this.#pointPresenter(update.id).setViewState(State.ABORTING);
         }
         break;
       case UpdateAction.DELETE_POINT:
@@ -106,7 +106,7 @@ export default class TripPresenter {
           await this.#pointModel.deletePoint(updateType, update);
         }
         catch(err){
-          this.#pointPresenter.get(update.id).setViewState(State.ABORTING);
+          this.#pointPresenter(update.id).setViewState(State.ABORTING);
         }
         break;
     }
@@ -179,6 +179,7 @@ export default class TripPresenter {
   }
 
   #renderBoard = (isMajor = false, isRenderFilter = true) => {
+
     if(this.#isLoading){
       this.#renderLoading();
       return;
@@ -200,8 +201,6 @@ export default class TripPresenter {
       this.#renderSort();
     }
     this.#renderPoints(this.points);
-
-
   }
 
   #clearBoard = ({resetSortType = false} = {}, isMajor = false) => {

@@ -4,7 +4,7 @@ import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 import dayjs from 'dayjs';
 import he from 'he';
 
-const createOfferForm = (point, offers, cities) => {
+const createOfferForm = (point, cities) => {
   const {
     pointType,
     destination,
@@ -24,6 +24,27 @@ const createOfferForm = (point, offers, cities) => {
   cities.forEach((city) => {
     citiesList += `<option value="${city}"></option>`;
   });
+
+  let picturesList = '';
+  destinationInfo.pictures.forEach((picture) => {
+    picturesList += `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`;
+  });
+
+  let offersList = '';
+  offer.offers.forEach((currentOffer) => {
+    offersList += `<div class="${currentOffer === undefined ? 'visually-hidden' : 'event__offer-selector'}">
+    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.offers.indexOf(currentOffer)}" type="checkbox" name="event-offer-luggage" 
+    value='${currentOffer.title}' ${currentOffer.isChecked ? 'checked' : ''}>
+    <label class="event__offer-label" for="event-offer-${offer.offers.indexOf(currentOffer)}">
+      <span class="event__offer-title">${currentOffer.title}</span>
+      &plus;
+      <span class="event__offer-price">${currentOffer.price}</span>
+      &euro;&nbsp;
+    </label>
+  </div>`;
+  });
+
+  const validDescription = he.encode(destination);
 
   return `<li class="trip-events__item">
       <form class="event event--edit" action="#" method="post">
@@ -91,7 +112,7 @@ const createOfferForm = (point, offers, cities) => {
             <label class="event__label  event__type-output" for="event-destination-1">
               ${pointType}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(destination)}" list="destination-list-1" ${isDisabled ? 'disabled' : ''}>
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${validDescription}" list="destination-list-1" ${isDisabled ? 'disabled' : ''}>
             <datalist id="destination-list-1">
               ${citiesList}
               
@@ -120,94 +141,17 @@ const createOfferForm = (point, offers, cities) => {
         <section class="event__details">
           <section class="event__section  event__section--offers">
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-
             <div class="event__available-offers ">
-              <div class="${offers.offers[0] === undefined ? 'visually-hidden' : 'event__offer-selector'}">
-                <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked>
-                <label class="event__offer-label" for="event-offer-luggage-1">
-                  <span class="event__offer-title">${offers.offers[0] === undefined ? null : offers.offers[0].title}</span>
-                  &plus;
-                  <span class="event__offer-price">${offer.offers[0] === undefined ? null : offers.offers[0].price}</span>
-                  &euro;&nbsp;
-                </label>
-              </div>
-
-              <div class="${offers.offers[1] === undefined ? 'visually-hidden' : 'event__offer-selector'}">
-                <input class="event__offer-checkbox  visually-hidden" id="event-offer-comfort-1" type="checkbox" name="event-offer-comfort" checked>
-                <label class="event__offer-label" for="event-offer-comfort-1">
-                  <span class="event__offer-title">${offers.offers[1] === undefined ? null : offers.offers[1].title}</span>
-                  &plus;
-                  <span class="event__offer-price">${offers.offers[1] === undefined ? null : offers.offers[1].price}</span>
-                  &euro;&nbsp;
-                </label>
-              </div>
-
-              <div class="${offers.offers[2] === undefined ? 'visually-hidden' : 'event__offer-selector'}">
-                <input class="event__offer-checkbox  visually-hidden" id="event-offer-2" type="checkbox" name="event-offer-meal">
-                <label class="event__offer-label" for="event-offer-2">
-                  <span class="event__offer-title">${offers.offers[2] === undefined ? null : offers.offers[2].title}</span>
-                  &plus;
-                  <span class="event__offer-price">${offers.offers[2] === undefined ? null : offers.offers[2].price}</span>
-                  &euro;&nbsp;
-                </label>
-              </div>
-
-              <div class=" ${offers.offers[3] === undefined ? 'visually-hidden' : 'event__offer-selector'}">
-                <input class="event__offer-checkbox  visually-hidden" id="event-offer-3" type="checkbox" name="event-offer-meal">
-                <label class="event__offer-label" for="event-offer-3">
-                  <span class="event__offer-title">${offers.offers[3] === undefined ? null : offers.offers[3].title}</span>
-                  &plus;
-                  <span class="event__offer-price">${offers.offers[3] === undefined ? null : offers.offers[3].price}</span>
-                  &euro;&nbsp;
-                </label>
-              </div>
-
-              <div class=" ${offers.offers[4] === undefined ? 'visually-hidden' : 'event__offer-selector'}">
-                <input class="event__offer-checkbox  visually-hidden" id="event-offer-4" type="checkbox" name="event-offer-meal">
-                <label class="event__offer-label" for="event-offer-4">
-                  <span class="event__offer-title">${offers.offers[4] === undefined ? null : offers.offers[4].title}</span>
-                  &plus;
-                  <span class="event__offer-price">${offers.offers[4] === undefined ? null : offers.offers[4].price}</span>
-                  &euro;&nbsp;
-                </label>
-              </div>
-          
-              <div class=" ${offers.offers[5] === undefined ? 'visually-hidden' : 'event__offer-selector'}">
-                <input class="event__offer-checkbox  visually-hidden" id="event-offer-5" type="checkbox" name="event-offer-meal">
-                <label class="event__offer-label" for="event-offer-5">
-                  <span class="event__offer-title">${offers.offers[5] === undefined ? null : offers.offers[5].title}</span>
-                  &plus;
-                  <span class="event__offer-price">${offers.offers[5] === undefined ? null : offers.offers[5].price}</span>
-                  &euro;&nbsp;
-                </label>
-              </div>
-            
-              <div class=" ${offers.offers[6] === undefined ? 'visually-hidden' : 'event__offer-selector'}">
-                <input class="event__offer-checkbox  visually-hidden" id="event-offer-6" type="checkbox" name="event-offer-meal">
-                <label class="event__offer-label" for="event-offer-6">
-                  <span class="event__offer-title">${offers.offers[6] === undefined ? null : offers.offers[6].title}</span>
-                  &plus;
-                  <span class="event__offer-price">${offers.offers[6] === undefined ? null : offers.offers[6].price}</span>
-                  &euro;&nbsp;
-                </label>
-              </div>
+              ${offersList}
             </div>
           </section>
-
           <section class="event__section  event__section--destination">
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
             <p class="event__destination-description">${destinationInfo.description}</p>
 
             <div class="event__photos-container">
               <div class="event__photos-tape">
-                <img class="event__photo" src="${destinationInfo.pictures[0] !== undefined ? destinationInfo.pictures[0].src : null}" alt="${destinationInfo.pictures[0] !== undefined ? destinationInfo.pictures[0].description : ''}">
-                <img class="event__photo" src="${destinationInfo.pictures[1] !== undefined ? destinationInfo.pictures[1].src : null}" alt="${destinationInfo.pictures[1] !== undefined ? destinationInfo.pictures[1].description : ''}">
-                <img class="event__photo" src="${destinationInfo.pictures[2] !== undefined ? destinationInfo.pictures[2].src : null}" alt="${destinationInfo.pictures[2] !== undefined ? destinationInfo.pictures[2].description : ''}">
-                <img class="event__photo" src="${destinationInfo.pictures[3] !== undefined ? destinationInfo.pictures[3].src : null}" alt="${destinationInfo.pictures[3] !== undefined ? destinationInfo.pictures[3].description : ''}">
-                <img class="event__photo" src="${destinationInfo.pictures[4] !== undefined ? destinationInfo.pictures[4].src : null}" alt="${destinationInfo.pictures[4] !== undefined ? destinationInfo.pictures[4].description : ''}">
-                <img class="event__photo" src="${destinationInfo.pictures[5] !== undefined ? destinationInfo.pictures[5].src : null}" alt="${destinationInfo.pictures[5] !== undefined ? destinationInfo.pictures[5].description : ''}">
-                <img class="event__photo" src="${destinationInfo.pictures[6] !== undefined ? destinationInfo.pictures[6].src : null}" alt="${destinationInfo.pictures[6] !== undefined ? destinationInfo.pictures[6].description : ''}">
-                <img class="event__photo" src="${destinationInfo.pictures[7] !== undefined ? destinationInfo.pictures[7].src : null}" alt="${destinationInfo.pictures[7] !== undefined ? destinationInfo.pictures[7].description : ''}">                
+                ${picturesList}                
               </div>
             </div>
           </section>
@@ -230,19 +174,16 @@ export default class OfferFormView extends SmartView {
     this.initialData = point;
     this._pointType = point.pointType;
 
+    this.#setOfferClickHandler();
     this.setFormClickHandler();
     this.#setDatePicker();
     this.setFormSubmitHandler();
-    this.setDestinationHandler();
+    this.#setDestinationHandler();
   }
 
   get template() {
-    const offers = this.#pointModel.offers.filter((offer) => offer.type === this._data.pointType)[0];
     const cities = this.#pointModel.destinations.map((des) => des.name);
-    // const filteredPoints = this.#getFilteredPoints();
-
-    // console.log(isFiltersDisable);
-    return createOfferForm(this._data, offers, cities);
+    return createOfferForm(this._data, cities);
   }
 
   setFormSubmitHandler = (callback) => {
@@ -260,6 +201,7 @@ export default class OfferFormView extends SmartView {
     this._callback.formDelete = callback;
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteHandler);
   }
+
 
   #formDeleteHandler = (evt) =>{
     evt.preventDefault();
@@ -318,14 +260,13 @@ export default class OfferFormView extends SmartView {
 
   removeElement =() =>{
     super.removeElement();
-
     if(this.#datepicker){
       this.#datepicker.destroy();
       this.#datepicker = null;
     }
   }
 
-  #updateForms = (isDisabled = false, isDeleting = false, isSaving = false) => {
+  #updateForms = () => {
     const priceValue = this.element.querySelector('.event__input--price').value;
     const destinationValue = this.element.querySelector('.event__input--destination').value;
     const timeStart = (this.element.querySelector('#event-start-time-1').value).split('/');
@@ -334,8 +275,7 @@ export default class OfferFormView extends SmartView {
     const timeEndValue = new Date(`${timeEnd[1]}/${timeEnd[0]}/${timeEnd[2]}`).toISOString();
     this.updateData({...this._data,
       price : priceValue, destination : destinationValue,
-      dateStartEvent: timeStartValue, dateEndEvent: timeEndValue,
-      isDisabled: isDisabled, isSaving : isSaving, isDeleting : isDeleting});
+      dateStartEvent: timeStartValue, dateEndEvent: timeEndValue});
   }
 
   updateElement = () =>{
@@ -350,9 +290,10 @@ export default class OfferFormView extends SmartView {
   }
 
   _restoreHandlers = () => {
+    this.#setOfferClickHandler();
     this.setFormClickHandler();
     this.#setDatePicker();
-    this.setDestinationHandler();
+    this.#setDestinationHandler();
     this.setFormSubmitHandler(this._callback.formSubmit);
   }
 
@@ -374,21 +315,32 @@ export default class OfferFormView extends SmartView {
   #updateClickHandler = (evt) =>{
     evt.preventDefault();
     this._pointType = evt.target.value;
+    this.#resetOffers();
     this._data = { ...this._data, pointType: this._pointType};
+    this._data.offer.offers = this.#getNewOffers(this._pointType);
     this.#updateForms();
   }
 
-  setDestinationHandler = () => {
-    // this._callback.handleDestination = callback;
+  #setDestinationHandler = () => {
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationHandler);
+  }
+
+  #resetOffers = () => {
+    const offers = this._data.offer.offers;
+    offers.forEach((offer) => {
+      offer.isChecked = false;
+    });
+  }
+
+  #getNewOffers = (pointType) => {
+    const offers = this.#pointModel.offers.filter((offer) => offer.type === pointType)[0].offers;
+    return offers;
   }
 
   #destinationHandler = () => {
     const description = this.element.querySelector('.event__input--destination').value;
     const currentDestination = this.#pointModel.destinations
       .filter((des) => des.name === description)[0];
-    // console.log(this._data);
-
     this._data = {...this._data, destinationInfo: {
       description: currentDestination.description,
       pictures: currentDestination.pictures
@@ -396,8 +348,31 @@ export default class OfferFormView extends SmartView {
     this.#updateForms();
   }
 
+  #setOfferClickHandler = () => {
+    this.element.querySelectorAll('.event__offer-checkbox').forEach((offer) => {
+      offer.addEventListener('click', this.#offerHandler);
+    });
+  }
 
-  // getFilteredPoints = () => {
-  //
-  // }
+
+  #offerHandler = (evt) => {
+    const offerDestination = evt.target.value;
+    const newOffers = this._data.offer.offers;
+    const currentPoint = this._data.offer.offers.filter((o) => o.title === offerDestination)[0];
+    const currentOffer = {...currentPoint, isChecked : !currentPoint.isChecked};
+    const currentOfferIndex = newOffers.findIndex((point) => point === currentPoint);
+    newOffers[currentOfferIndex] = currentOffer;
+  }
+
+  setEscResetHandler = (callback) => {
+    this._callback.eskReset = callback;
+    document.addEventListener('keydown', this.#onEscKeydown);
+  }
+
+  #onEscKeydown = (evt) => {
+    if (evt.key === 'Escape' || evt.key === 'Esc')
+    {
+      this._callback.eskReset();
+    }
+  }
 }
