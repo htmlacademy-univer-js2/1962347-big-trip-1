@@ -6,7 +6,7 @@ export default class AbstractObservable{
     }
 
     removeObserver(observers){
-      this.#observers.delete(observers);
+      this.#observers.delete(observers);//
     }
 
     _notify(event, payload){
