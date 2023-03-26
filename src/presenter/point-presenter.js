@@ -46,7 +46,6 @@ export default class PointPresenter {
 
     this.#pointComponent.setEditClickHandler(this.#handleEdit);
     this.#pointEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
-    // this.#pointComponent.setFormResetHandler(this.#changeMode);
     this.#pointEditComponent.setFormDeleteHandler(this.#handleFormReset);
     this.#pointComponent.setFavoriteClickHandler(this.#handleFavorite);
     render(this.#pointContainer, this.#pointComponent, renderPosition.BEFOREEND);
@@ -54,6 +53,7 @@ export default class PointPresenter {
     if (this.#mode === Mode.DEFAULT && prevPointComponent) {
       replace(this.#pointComponent, prevPointComponent);
     }
+
     if (this.#mode === Mode.EDITING && prevEditPointComponent) {
       replace(this.#pointEditComponent, prevEditPointComponent);
     }
@@ -76,17 +76,17 @@ export default class PointPresenter {
   #replacePointToForm = () => {
     replace(this.#pointEditComponent, this.#pointComponent);
     this.#changeMode();
-    document.addEventListener('keydown', this.#onEscKeydowm);
+    document.addEventListener('keydown', this.#onEscKeydown);
     this.#mode = Mode.EDITING;
   }
 
   #replaceFormToPoint = () => {
     replace(this.#pointComponent, this.#pointEditComponent);
-    document.removeEventListener('keydown', this.#onEscKeydowm);
+    document.removeEventListener('keydown', this.#onEscKeydown);
     this.#mode = Mode.DEFAULT;
   }
 
-  #onEscKeydowm = (evt) => {
+  #onEscKeydown = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc')
     {
       evt.preventDefault();
@@ -97,7 +97,7 @@ export default class PointPresenter {
       this.#pointEditComponent.reset(this.#prevPoint);
 
       this.#pointEditComponent._restoreHandlers();
-      document.removeEventListener('keydown', this.#onEscKeydowm);
+      document.removeEventListener('keydown', this.#onEscKeydown);
 
     }
   }
@@ -107,33 +107,27 @@ export default class PointPresenter {
   }
 
   #handleFormSubmit = (point) => {
-    document.removeEventListener('keydown', this.#onEscKeydowm);
-
-    // try{
-    //   this.#changeAction(UpdateAction.UPDATE_POINT, UpdateType.PATCH, point).finally(()=>{
-    //     this.#replaceFormToPoint();
-
-    //   });
-    // }
-    // catch(err){
-    //   return err;
-    // }
-    this.#changeAction(UpdateAction.UPDATE_POINT, UpdateType.PATCH, point).finally(() => {
-
+    document.removeEventListener('keydown', this.#onEscKeydown);
+    this.#changeAction(UpdateAction.UPDATE_POINT, UpdateType.MAJOR, point).finally(()=>{
       this.#replaceFormToPoint();
-    });
 
+    });
   }
 
   #handleEdit = () => {
     this.#replacePointToForm();
-    document.addEventListener('keydown', this.#onEscKeydowm);
+    document.addEventListener('keydown', this.#onEscKeydown);
   }
 
   #handleFormReset = (point) => {
-    this.#changeAction(UpdateAction.DELETE_POINT, UpdateType.MINOR, point).finally(()=>{
+    document.removeEventListener('keydown', this.#onEscKeydown);
+    this.#changeAction(UpdateAction.DELETE_POINT, UpdateType.MAJOR, point).finally(()=>{
       this.#replaceFormToPoint();
     });
+  }
+
+  #handleFormDestination = (point) => {
+    this.#changeAction(UpdateAction.UPDATE_POINT, UpdateType.PATCH, point);
   }
 
   setViewState = (state) => {
