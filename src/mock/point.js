@@ -1,13 +1,32 @@
 import { nanoid } from 'nanoid';
-//import dayjs from 'dayjs';
+import dayjs from 'dayjs';
 
+export const isEqualCities = (inputValue) =>{
+  const cities = ['Moscow', 'Berlin', 'Prague', 'Perm',
+    'Geneva', 'Chamonix', 'Amsterdam', 'Ekaterinburg','Kyiv', 'Paris'];
+  return cities.some((city) => city === inputValue);
+};
+
+const createOffer = (cost, name) => ({price: cost, description : name});
+export const servises = {
+  'taxi' : [createOffer(30, 'Add luggage'),
+    createOffer(100, 'Switch to comfort class')],
+  'bus' : [createOffer(20, 'Add luggage'), createOffer(10, 'Add meal'), createOffer(100, 'Switch to comfort class')],
+  'train':[createOffer(25, 'Add luggage'), createOffer(15, 'Add a bed'), createOffer(15, 'Choose seats')],
+  'ship':[createOffer(25, 'Add luggage'), createOffer(15, 'Add a bed'), createOffer(100, 'Switch to comfort class')],
+  'drive':[createOffer(25, 'Add luggage'), createOffer(15, 'Add meal'), createOffer(100, 'Switch to comfort class')],
+  'flight': [createOffer(30, 'Add luggage'), createOffer(15, 'Choose seats'), createOffer(100, 'Switch to comfort class')],
+  'check-in': [createOffer(30, ' Smoking room'), createOffer(100, ' VIP hall')],
+  'sightseeing': [createOffer(50, 'guide'), createOffer(100, 'Rent a car')],
+  'restaurant' : [createOffer(30, ' Smoking room'), createOffer(100, ' VIP hall')]
+};
 const getRandomIntInclusive = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
-const generateDescription = () => {
+export const generateDescription = () => {
   const description = [
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     'Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra.',
@@ -42,7 +61,7 @@ const generateOffers = () => {
   return offers;
 };
 
-const generatePictures = () => {
+export const generatePictures = () => {
   const picturesSrc = [];
   for (let i = 0; i <= 4; i++) {
     picturesSrc.push(`http://picsum.photos/248/152?r=${Math.random()}`);
@@ -62,16 +81,24 @@ const getTimePeriod = (waitingTime) => {
   return [`${startPeriod.getHours()}:${startPeriod.getMinutes()}`, `${endPeriod.getHours()}:${endPeriod.getMinutes()}`];
 };
 
+const getDate = ()=>{
+  const day = dayjs(new Date());
+  day.add(getRandomIntInclusive(0, 12), 'month');
+  day.add(getRandomIntInclusive(0, 8), 'day');
+  day.add(getRandomIntInclusive(0, 24), 'hour');
+
+  return day;
+};
+
 const getWaitingTime = () => {
   const randomNumber = getRandomIntInclusive(1, 24);
   return randomNumber * 5;
 };
 
-
 export const generatePoint = () => {
   const pointType = generatePointType();
   const waitingTime = getWaitingTime();
-
+  const date = getDate();
   return {
     pointType,
     id: nanoid(),
@@ -87,6 +114,11 @@ export const generatePoint = () => {
     },
     isFavorite: false,
     waitingTime: waitingTime,
-    period: getTimePeriod(waitingTime)
+    period: getTimePeriod(waitingTime),
+    offersForm : servises[pointType],
+    dateStartEvent: date,
+    dateEndEvent: date,
   };
 };
+
+
